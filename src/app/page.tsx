@@ -1,8 +1,8 @@
 "use client";
 
-import { usePokemon } from "./usePokemon";
 import { useState, useMemo, FormEvent } from "react";
 import Link from "next/link";
+import { usePokemon } from "./usePokemon";
 
 type Pokemon = {
   name: string;
