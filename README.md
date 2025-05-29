@@ -60,7 +60,6 @@ http://localhost:3000
 
 While some features were not implemented due to the nature of server-side data fetching, they could enhance UX in a more dynamic app:
 
-- [ ] **Debounced search** – Would improve responsiveness on the client side for larger datasets.
 - [ ] **Skeleton loading states** – Not strictly required here since data is fetched server-side, but could be useful for future client-side transitions.
 - [ ] **Global state (e.g., Zustand)** – Unnecessary in this case as sorting and search state are local and lightweight, but would be helpful in more complex or multi-page flows.
 - [ ] **Accessibility audit** – Further improvements could be made, especially around `aria-*` attributes.

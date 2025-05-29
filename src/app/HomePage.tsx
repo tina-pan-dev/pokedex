@@ -1,9 +1,10 @@
 // app/HomePage.tsx (Client Component)
 "use client";
 
-import { useState, useMemo, FormEvent } from "react";
+import { useState, useMemo, FormEvent, useEffect } from "react";
 import Link from "next/link";
 import { typeColors } from "./typeColors";
+import { useDebounce } from "./useDebounce";
 
 export type Pokemon = {
   name: string;
@@ -28,6 +29,17 @@ export default function HomePage({ initialList }: Props) {
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const debouncedSearch = useDebounce(searchInput.trim(), 300);
+  useEffect(() => {
+    setSearchTerm(debouncedSearch);
+    setVisibleCount(12);
+  }, [debouncedSearch]);
+
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setVisibleCount(12);
+  };
+
   const filteredList = useMemo<Pokemon[]>(() => {
     return initialList.filter((pokemon) => {
       const idMatch = pokemon.id.toString().includes(searchTerm.trim());
@@ -48,12 +60,6 @@ export default function HomePage({ initialList }: Props) {
   const displayedList = useMemo<Pokemon[]>(() => {
     return sortedList.slice(0, visibleCount);
   }, [sortedList, visibleCount]);
-
-  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSearchTerm(searchInput.trim());
-    setVisibleCount(12);
-  };
 
   return (
     <div className="p-4">

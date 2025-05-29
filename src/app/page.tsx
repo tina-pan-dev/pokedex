@@ -11,14 +11,14 @@ type PokemonTypeData = {
 
 export default async function Page() {
   const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151", {
-    next: { revalidate: 3600 }, // Optional caching
+    next: { revalidate: 3600 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch Pokémon list");
 
   const data = await res.json();
 
-  // Fetch detailed data (with types) for each Pokémon in parallel
+  // Fetch detailed data (with types) for each Pokemon in parallel
   const detailedList: Pokemon[] = await Promise.all(
     data.results.map(
       async (pokemon: { name: string; url: string }, index: number) => {
