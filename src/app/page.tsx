@@ -1,7 +1,7 @@
 "use client";
 
 import { usePokemon } from "./usePokemon";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
@@ -12,32 +12,39 @@ export default function HomePage() {
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const pokemonList = useMemo(() => {
+    if (!data?.results) return [];
+    return data.results.map(
+      (pokemon: { name: string; url: string }, index: number) => ({
+        ...pokemon,
+        id: index + 1,
+      })
+    );
+  }, [data]);
+
+  const filteredList = useMemo(() => {
+    return pokemonList.filter((pokemon) => {
+      const idMatch = pokemon.id.toString().includes(searchTerm.trim());
+      const nameMatch = pokemon.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase().trim());
+      return idMatch || nameMatch;
+    });
+  }, [pokemonList, searchTerm]);
+
+  const sortedList = useMemo(() => {
+    return [...filteredList].sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      return a.id - b.id;
+    });
+  }, [filteredList, sortBy]);
+
+  const displayedList = useMemo(() => {
+    return sortedList.slice(0, visibleCount);
+  }, [sortedList, visibleCount]);
+
   if (isLoading) return <p className="p-4">Loading...</p>;
   if (error) return <p className="p-4 text-red-600">Something went wrong!</p>;
-
-  const pokemonList = data.results.map(
-    (pokemon: { name: string; url: string }, index: number) => ({
-      ...pokemon,
-      id: index + 1,
-    })
-  );
-
-  // 🔍 Filter by name or number
-  const filteredList = pokemonList.filter((pokemon) => {
-    const idMatch = pokemon.id.toString().includes(searchTerm.trim());
-    const nameMatch = pokemon.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase().trim());
-    return idMatch || nameMatch;
-  });
-
-  // 🔢 Sort
-  const sortedList = [...filteredList].sort((a, b) => {
-    if (sortBy === "name") return a.name.localeCompare(b.name);
-    return a.id - b.id;
-  });
-
-  const displayedList = sortedList.slice(0, visibleCount);
 
   return (
     <div className="p-4">
