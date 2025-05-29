@@ -1,5 +1,5 @@
 // src/pages/_app.tsx
-import "./styles/globals.css"; // adjust the path if needed
+import "./styles/globals.css";
 import type { AppProps } from "next/app";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
