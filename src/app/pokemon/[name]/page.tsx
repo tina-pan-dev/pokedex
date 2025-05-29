@@ -1,23 +1,26 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
-export default function PokemonDetailPage() {
-  const { name } = useParams();
+export async function generateStaticParams() {
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+  const data = await res.json();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["pokemon-details", name],
-    queryFn: async () => {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-      if (!res.ok) throw new Error("Failed to fetch Pokémon details");
-      return res.json();
-    },
-  });
+  return data.results.map((pokemon: { name: string }) => ({
+    name: pokemon.name,
+  }));
+}
 
-  if (isLoading) return <p className="p-4">Loading...</p>;
-  if (error) return <p className="p-4 text-red-600">Something went wrong!</p>;
+export default async function PokemonPage({
+  params,
+}: {
+  params: { name: string };
+}) {
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${params.name}`);
+
+  if (!res.ok) {
+    return <p className="p-6 text-center text-red-600">Pokémon not found.</p>;
+  }
+
+  const data = await res.json();
 
   const paddedId = `#${data.id.toString().padStart(4, "0")}`;
   const image = data.sprites.other["official-artwork"].front_default;
@@ -78,7 +81,6 @@ export default function PokemonDetailPage() {
   );
 }
 
-// Type → Color mapping
 const typeColors: Record<string, string> = {
   normal: "bg-gray-400",
   fire: "bg-red-500",
