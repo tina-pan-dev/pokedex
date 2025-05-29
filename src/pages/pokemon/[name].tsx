@@ -38,27 +38,6 @@ type Props = {
   data: PokemonData | null;
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const name = context.params?.name;
-
-  if (typeof name !== "string") {
-    return { props: { data: null } };
-  }
-
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    if (!res.ok) throw new Error("Fetch failed");
-
-    const data: PokemonData = await res.json();
-
-    return { props: { data } };
-  } catch {
-    return { props: { data: null } };
-  }
-};
-
 export default function PokemonPage({ data }: Props) {
   if (!data) {
     return <p className="p-6 text-center text-red-600">Pokémon not found.</p>;
@@ -129,3 +108,24 @@ export default function PokemonPage({ data }: Props) {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const name = context.params?.name;
+
+  if (typeof name !== "string") {
+    return { props: { data: null } };
+  }
+
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    if (!res.ok) throw new Error("Fetch failed");
+
+    const data: PokemonData = await res.json();
+
+    return { props: { data } };
+  } catch {
+    return { props: { data: null } };
+  }
+};

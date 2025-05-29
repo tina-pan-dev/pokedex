@@ -1,6 +1,6 @@
 # Pokedex App
 
-This is a responsive, performant Pokedex web app built with **Next.js 13 App Router**, **TypeScript**, and **Tailwind CSS**. It showcases the original 151 Pokemon with server-rendered data, dynamic detail pages, search, sorting, and more.
+This is a responsive, performant Pokedex web app built with **Next.js 13 Pages Router**, **TypeScript**, and **Tailwind CSS**. It showcases the original 151 Pokemon with server-rendered data, dynamic detail pages, search, sorting, and more.
 
 ## 🧱 Tech Stack
 
