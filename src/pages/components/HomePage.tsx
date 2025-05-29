@@ -1,10 +1,8 @@
-// app/HomePage.tsx (Client Component)
-"use client";
-
+// pages/HomePage.tsx
 import { useState, useMemo, FormEvent, useEffect } from "react";
 import Link from "next/link";
-import { typeColors } from "./typeColors";
-import { useDebounce } from "./useDebounce";
+import { typeColors } from "../utils/typeColors";
+import { useDebounce } from "../utils/useDebounce";
 
 export type Pokemon = {
   name: string;

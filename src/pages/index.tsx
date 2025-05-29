@@ -1,5 +1,6 @@
-// app/page.tsx (Server Component)
-import HomePage, { Pokemon } from "./HomePage";
+// pages/index.tsx
+import HomePage, { Pokemon } from "./components/HomePage";
+import { GetServerSideProps } from "next";
 
 type PokemonTypeData = {
   slot: number;
@@ -9,16 +10,23 @@ type PokemonTypeData = {
   };
 };
 
-export default async function Page() {
-  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151", {
-    next: { revalidate: 3600 },
-  });
+type Props = {
+  initialList: Pokemon[];
+};
 
-  if (!res.ok) throw new Error("Failed to fetch Pokémon list");
+export default function IndexPage({ initialList }: Props) {
+  return <HomePage initialList={initialList} />;
+}
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+
+  if (!res.ok) {
+    return { notFound: true };
+  }
 
   const data = await res.json();
 
-  // Fetch detailed data (with types) for each Pokemon in parallel
   const detailedList: Pokemon[] = await Promise.all(
     data.results.map(
       async (pokemon: { name: string; url: string }, index: number) => {
@@ -46,5 +54,9 @@ export default async function Page() {
     )
   );
 
-  return <HomePage initialList={detailedList} />;
-}
+  return {
+    props: {
+      initialList: detailedList,
+    },
+  };
+};

@@ -1,8 +1,8 @@
-// app/api/pokemon/[name]/page.tsx
-
+// src/pages/pokemon/[name].tsx
+import { GetServerSideProps } from "next";
 import Image from "next/image";
-import { typeColors } from "../../typeColors";
 import Link from "next/link";
+import { typeColors } from "../utils/typeColors";
 
 interface PokemonStat {
   base_stat: number;
@@ -34,27 +34,35 @@ interface PokemonData {
   };
 }
 
-export async function generateStaticParams() {
-  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
-  const data: { results: { name: string }[] } = await res.json();
+type Props = {
+  data: PokemonData | null;
+};
 
-  return data.results.map((pokemon) => ({
-    name: pokemon.name,
-  }));
-}
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const name = context.params?.name;
 
-export default async function PokemonPage({
-  params,
-}: {
-  params: { name: string };
-}) {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${params.name}`);
-
-  if (!res.ok) {
-    return <p className="p-6 text-center text-red-600">Pokémon not found.</p>;
+  if (typeof name !== "string") {
+    return { props: { data: null } };
   }
 
-  const data: PokemonData = await res.json();
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    if (!res.ok) throw new Error("Fetch failed");
+
+    const data: PokemonData = await res.json();
+
+    return { props: { data } };
+  } catch {
+    return { props: { data: null } };
+  }
+};
+
+export default function PokemonPage({ data }: Props) {
+  if (!data) {
+    return <p className="p-6 text-center text-red-600">Pokémon not found.</p>;
+  }
 
   const paddedId = `#${data.id.toString().padStart(4, "0")}`;
   const image = data.sprites.other["official-artwork"].front_default;
@@ -69,6 +77,7 @@ export default async function PokemonPage({
       >
         ← Back to list
       </Link>
+
       <div className="flex flex-col items-center bg-white rounded-2xl p-6 shadow-md">
         <Image
           src={image}
