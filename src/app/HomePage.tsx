@@ -2,6 +2,7 @@
 
 import { useState, useMemo, FormEvent } from "react";
 import Link from "next/link";
+import { typeColors } from "./typeColors";
 
 export type Pokemon = {
   name: string;
@@ -131,13 +132,15 @@ export default function HomePage({ initialList }: Props) {
                   <h2 className="text-lg font-bold capitalize mb-2">
                     {pokemon.name}
                   </h2>
-                  <div className="flex flex-wrap gap-1 justify-center">
+                  <div className="flex flex-wrap gap-1 justify-center mt-1">
                     {pokemon.types
                       .sort((a, b) => a.slot - b.slot)
                       .map((t) => (
                         <span
                           key={t.type.name}
-                          className="px-2 py-0.5 text-xs bg-gray-200 text-gray-700 rounded-full"
+                          className={`px-2 py-0.5 text-xs text-white rounded-full capitalize ${
+                            typeColors[t.type.name] || "bg-gray-400"
+                          }`}
                         >
                           {t.type.name}
                         </span>

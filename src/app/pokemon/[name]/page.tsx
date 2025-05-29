@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { typeColors } from "../../typeColors";
 
 interface PokemonStat {
   base_stat: number;
@@ -54,7 +55,7 @@ export default async function PokemonPage({
 
   const paddedId = `#${data.id.toString().padStart(4, "0")}`;
   const image = data.sprites.other["official-artwork"].front_default;
-  const types = data.types.map((t) => t.type.name);
+  const types = data.types.sort((a, b) => a.slot - b.slot);
   const stats = data.stats;
 
   return (
@@ -72,14 +73,14 @@ export default async function PokemonPage({
         <p className="text-gray-500 text-sm mb-4">{paddedId}</p>
 
         <div className="flex gap-2 mb-6">
-          {types.map((type) => (
+          {types.map((t) => (
             <span
-              key={type}
+              key={t.type.name}
               className={`text-xs px-3 py-1 rounded-full capitalize text-white ${
-                typeColors[type] || "bg-gray-400"
+                typeColors[t.type.name] || "bg-gray-400"
               }`}
             >
-              {type}
+              {t.type.name}
             </span>
           ))}
         </div>
@@ -110,24 +111,3 @@ export default async function PokemonPage({
     </div>
   );
 }
-
-const typeColors: Record<string, string> = {
-  normal: "bg-gray-400",
-  fire: "bg-red-500",
-  water: "bg-blue-500",
-  grass: "bg-green-500",
-  electric: "bg-yellow-400",
-  ice: "bg-cyan-300",
-  fighting: "bg-orange-700",
-  poison: "bg-purple-600",
-  ground: "bg-yellow-700",
-  flying: "bg-indigo-300",
-  psychic: "bg-pink-400",
-  bug: "bg-lime-500",
-  rock: "bg-amber-700",
-  ghost: "bg-indigo-700",
-  dragon: "bg-indigo-800",
-  dark: "bg-gray-800",
-  steel: "bg-gray-500",
-  fairy: "bg-pink-300",
-};
