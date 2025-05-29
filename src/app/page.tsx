@@ -61,8 +61,8 @@ export default function HomePage() {
     <div className="p-4">
       {/* Search + Sort Controls */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Search (centered always) */}
-        <div className="w-full flex justify-center sm:justify-start">
+        {/* Search (always centered on its own line) */}
+        <div className="w-full flex justify-center">
           <form
             onSubmit={handleSearchSubmit}
             className="flex w-full max-w-md gap-2"
@@ -95,11 +95,11 @@ export default function HomePage() {
           </form>
         </div>
 
-        {/* Sort dropdown (top right) */}
-        <div className="flex items-center gap-2 sm:justify-end">
+        {/* Sort dropdown (right on larger screens) */}
+        <div className="flex items-center justify-center sm:justify-end w-full sm:w-auto">
           <label
             htmlFor="sort-select"
-            className="text-sm text-gray-700 font-medium"
+            className="text-sm text-gray-700 font-medium mr-2"
           >
             Sort by:
           </label>
