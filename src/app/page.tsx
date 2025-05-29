@@ -8,11 +8,11 @@ export default function HomePage() {
   const { data, isLoading, error } = usePokemon();
   const [visibleCount, setVisibleCount] = useState(12);
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoading) return <p className="p-4">Loading...</p>;
   if (error) return <p className="p-4 text-red-600">Something went wrong!</p>;
 
-  // 🧠 Prepare Pokémon with index for sorting by number
   const pokemonList = data.results.map(
     (pokemon: { name: string; url: string }, index: number) => ({
       ...pokemon,
@@ -20,30 +20,54 @@ export default function HomePage() {
     })
   );
 
-  // 🔁 Sort logic
-  const sortedList = [...pokemonList].sort((a, b) => {
+  // 🔍 Filter by name or number
+  const filteredList = pokemonList.filter((pokemon) => {
+    const idMatch = pokemon.id.toString().includes(searchTerm.trim());
+    const nameMatch = pokemon.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase().trim());
+    return idMatch || nameMatch;
+  });
+
+  // 🔢 Sort
+  const sortedList = [...filteredList].sort((a, b) => {
     if (sortBy === "name") return a.name.localeCompare(b.name);
     return a.id - b.id;
   });
 
+  const displayedList = sortedList.slice(0, visibleCount);
+
   return (
     <div className="p-4">
-      {/* Sort Dropdown */}
-      <div className="mb-4 flex justify-end">
-        <label className="text-sm font-medium mr-2">Sort by:</label>
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as "number" | "name")}
-          className="border rounded px-3 py-1 text-sm"
-        >
-          <option value="number">Number</option>
-          <option value="name">Name (A–Z)</option>
-        </select>
+      {/* Controls */}
+      <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <input
+          type="text"
+          placeholder="Search by name or number"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setVisibleCount(12); // reset pagination on search
+          }}
+          className="border rounded px-4 py-2 text-sm w-full md:w-64"
+        />
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium">Sort by:</label>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as "number" | "name")}
+            className="border rounded px-3 py-1 text-sm"
+          >
+            <option value="number">Number</option>
+            <option value="name">Name (A–Z)</option>
+          </select>
+        </div>
       </div>
 
-      {/* Pokémon Grid */}
+      {/* Grid */}
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
-        {sortedList.slice(0, visibleCount).map((pokemon) => {
+        {displayedList.map((pokemon) => {
           const paddedId = `#${pokemon.id.toString().padStart(4, "0")}`;
           const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
 
@@ -69,7 +93,7 @@ export default function HomePage() {
         })}
       </ul>
 
-      {/* Load More Button */}
+      {/* Load More */}
       {visibleCount < sortedList.length && (
         <div className="mt-8 text-center">
           <button
@@ -79,6 +103,11 @@ export default function HomePage() {
             Load more Pokémon
           </button>
         </div>
+      )}
+
+      {/* No results */}
+      {filteredList.length === 0 && (
+        <p className="mt-8 text-center text-gray-500">No Pokémon found.</p>
       )}
     </div>
   );
