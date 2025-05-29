@@ -1,5 +1,8 @@
+// app/api/pokemon/[name]/page.tsx
+
 import Image from "next/image";
 import { typeColors } from "../../typeColors";
+import Link from "next/link";
 
 interface PokemonStat {
   base_stat: number;
@@ -60,6 +63,12 @@ export default async function PokemonPage({
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <Link
+        href="/"
+        className="mb-4 inline-block text-blue-600 hover:underline text-sm"
+      >
+        ← Back to list
+      </Link>
       <div className="flex flex-col items-center bg-white rounded-2xl p-6 shadow-md">
         <Image
           src={image}

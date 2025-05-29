@@ -1,3 +1,4 @@
+// app/HomePage.tsx (Client Component)
 "use client";
 
 import { useState, useMemo, FormEvent } from "react";
