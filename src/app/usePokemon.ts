@@ -1,16 +1,20 @@
+// app/usePokemon.ts
 import { useQuery } from "@tanstack/react-query";
 
-const fetchPokemonList = async () => {
-  const res = await fetch(
-    "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0"
-  );
-  if (!res.ok) throw new Error("Failed to fetch Pokémon");
-  return res.json();
+export type Pokemon = {
+  name: string;
+  url: string;
+  id: number;
 };
 
-export const usePokemon = () => {
-  return useQuery({
-    queryKey: ["pokemon", 151],
-    queryFn: fetchPokemonList,
+export function usePokemon() {
+  return useQuery<Pokemon[], Error>({
+    queryKey: ["pokemon"],
+    queryFn: async () => {
+      const res = await fetch("/api/pokemon");
+      if (!res.ok) throw new Error("Failed to fetch Pokémon");
+      return res.json();
+    },
+    staleTime: 1000 * 60 * 5, // cache for 5 minutes
   });
-};
+}
