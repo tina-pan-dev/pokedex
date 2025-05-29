@@ -3,11 +3,13 @@
 import { usePokemon } from "./usePokemon";
 import { useState } from "react";
 import Link from "next/link";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
 export default function HomePage() {
   const { data, isLoading, error } = usePokemon();
   const [visibleCount, setVisibleCount] = useState(12);
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
+  const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoading) return <p className="p-4">Loading...</p>;
@@ -39,18 +41,31 @@ export default function HomePage() {
 
   return (
     <div className="p-4">
-      {/* Controls */}
+      {/* Search + Sort Controls */}
       <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <input
-          type="text"
-          placeholder="Search by name or number"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setVisibleCount(12); // reset pagination on search
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSearchTerm(searchInput.trim());
+            setVisibleCount(12);
           }}
-          className="border rounded px-4 py-2 text-sm w-full md:w-64"
-        />
+          className="w-full md:w-auto flex gap-2 items-center"
+        >
+          <input
+            type="text"
+            placeholder="Search by name or number"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="border rounded px-4 py-2 text-sm w-full md:w-64"
+          />
+          <button
+            type="submit"
+            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center"
+            aria-label="Search"
+          >
+            <MagnifyingGlassIcon className="h-5 w-5" />
+          </button>
+        </form>
 
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">Sort by:</label>
