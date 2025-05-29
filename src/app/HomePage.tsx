@@ -141,7 +141,7 @@ export default function HomePage({ initialList }: Props) {
           const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
 
           return (
-            <li key={pokemon.name}>
+            <li key={pokemon.id}>
               <Link href={`/pokemon/${pokemon.name}`} className="block">
                 <div className="bg-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col items-center">
                   <div className="w-28 h-28 mb-2 flex items-center justify-center">
