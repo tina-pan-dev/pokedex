@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePokemon } from "./usePokemon";
 
 export default function HomePage() {
@@ -17,32 +18,32 @@ export default function HomePage() {
           const paddedId = `#${id.toString().padStart(4, "0")}`;
 
           return (
-            <li
-              key={pokemon.name}
-              className="bg-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col items-center"
-            >
-              <div className="w-28 h-28 mb-2 flex items-center justify-center">
-                <img
-                  src={imageUrl}
-                  alt={pokemon.name}
-                  className="w-full h-full object-contain"
-                />
-              </div>
+            <li key={pokemon.name}>
+              <Link href={`/pokemon/${pokemon.name}`} className="block">
+                <div className="bg-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col items-center">
+                  <div className="w-28 h-28 mb-2 flex items-center justify-center">
+                    <img
+                      src={imageUrl}
+                      alt={pokemon.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
 
-              <p className="text-sm text-gray-500">{paddedId}</p>
-              <h2 className="text-lg font-bold capitalize mb-2">
-                {pokemon.name}
-              </h2>
+                  <p className="text-sm text-gray-500">{paddedId}</p>
+                  <h2 className="text-lg font-bold capitalize mb-2">
+                    {pokemon.name}
+                  </h2>
 
-              {/* Optional static type tags (replace later with dynamic ones) */}
-              <div className="flex gap-2">
-                <span className="text-xs px-2 py-1 bg-green-400/80 text-white rounded-full">
-                  Grass
-                </span>
-                <span className="text-xs px-2 py-1 bg-purple-400/80 text-white rounded-full">
-                  Poison
-                </span>
-              </div>
+                  <div className="flex gap-2">
+                    <span className="text-xs px-2 py-1 bg-green-400/80 text-white rounded-full">
+                      Grass
+                    </span>
+                    <span className="text-xs px-2 py-1 bg-purple-400/80 text-white rounded-full">
+                      Poison
+                    </span>
+                  </div>
+                </div>
+              </Link>
             </li>
           );
         }
