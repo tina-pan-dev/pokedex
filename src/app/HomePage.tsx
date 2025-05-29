@@ -61,15 +61,31 @@ export default function HomePage({ initialList }: Props) {
         <div className="w-full flex justify-center">
           <form
             onSubmit={handleSearchSubmit}
-            className="flex w-full max-w-md gap-2"
+            className="flex w-full max-w-md gap-2 relative"
           >
             <input
               type="text"
               placeholder="Search by name or number"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="border rounded px-4 py-2 text-sm w-full"
+              className="border rounded px-4 py-2 text-sm w-full pr-8"
             />
+
+            {searchInput && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchInput("");
+                  setSearchTerm("");
+                  setVisibleCount(12);
+                }}
+                className="absolute right-14 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 text-sm cursor-pointer"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+
             <button
               type="submit"
               className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center"
