@@ -3,10 +3,17 @@
 import { useState, useMemo, FormEvent } from "react";
 import Link from "next/link";
 
-type Pokemon = {
+export type Pokemon = {
   name: string;
   url: string;
   id: number;
+  types: {
+    slot: number;
+    type: {
+      name: string;
+      url: string;
+    };
+  }[];
 };
 
 type Props = {
@@ -14,12 +21,12 @@ type Props = {
 };
 
 export default function HomePage({ initialList }: Props) {
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [visibleCount, setVisibleCount] = useState<number>(12);
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
-  const [searchInput, setSearchInput] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const filteredList = useMemo(() => {
+  const filteredList = useMemo<Pokemon[]>(() => {
     return initialList.filter((pokemon) => {
       const idMatch = pokemon.id.toString().includes(searchTerm.trim());
       const nameMatch = pokemon.name
@@ -29,18 +36,18 @@ export default function HomePage({ initialList }: Props) {
     });
   }, [initialList, searchTerm]);
 
-  const sortedList = useMemo(() => {
+  const sortedList = useMemo<Pokemon[]>(() => {
     return [...filteredList].sort((a, b) => {
       if (sortBy === "name") return a.name.localeCompare(b.name);
       return a.id - b.id;
     });
   }, [filteredList, sortBy]);
 
-  const displayedList = useMemo(() => {
+  const displayedList = useMemo<Pokemon[]>(() => {
     return sortedList.slice(0, visibleCount);
   }, [sortedList, visibleCount]);
 
-  const handleSearchSubmit = (e: FormEvent) => {
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSearchTerm(searchInput.trim());
     setVisibleCount(12);
@@ -50,7 +57,6 @@ export default function HomePage({ initialList }: Props) {
     <div className="p-4">
       {/* Search + Sort Controls */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Search (always centered on its own line) */}
         <div className="w-full flex justify-center">
           <form
             onSubmit={handleSearchSubmit}
@@ -84,7 +90,7 @@ export default function HomePage({ initialList }: Props) {
           </form>
         </div>
 
-        {/* Sort dropdown (right on larger screens) */}
+        {/* Sort dropdown */}
         <div className="flex items-center justify-center sm:justify-end w-full sm:w-auto">
           <label
             htmlFor="sort-select"
@@ -104,7 +110,7 @@ export default function HomePage({ initialList }: Props) {
         </div>
       </div>
 
-      {/* Grid */}
+      {/* Pokémon Grid */}
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none">
         {displayedList.map((pokemon) => {
           const paddedId = `#${pokemon.id.toString().padStart(4, "0")}`;
@@ -125,6 +131,18 @@ export default function HomePage({ initialList }: Props) {
                   <h2 className="text-lg font-bold capitalize mb-2">
                     {pokemon.name}
                   </h2>
+                  <div className="flex flex-wrap gap-1 justify-center">
+                    {pokemon.types
+                      .sort((a, b) => a.slot - b.slot)
+                      .map((t) => (
+                        <span
+                          key={t.type.name}
+                          className="px-2 py-0.5 text-xs bg-gray-200 text-gray-700 rounded-full"
+                        >
+                          {t.type.name}
+                        </span>
+                      ))}
+                  </div>
                 </div>
               </Link>
             </li>
