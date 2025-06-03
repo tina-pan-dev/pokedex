@@ -10,6 +10,7 @@ This is a responsive, performant Pokedex web app built with **Next.js**, **TypeS
 - PokéAPI (https://pokeapi.co)
 - Server-side rendering (SSR)
 - React hooks + memoization
+- React Testing Library for testing
 
 ## ✨ Features
 
@@ -45,6 +46,9 @@ npm run dev
 
 # Open in browser
 http://localhost:3000
+
+# Run tests
+npm test
 ```
 
 ## 🧩 Components
@@ -61,6 +65,7 @@ http://localhost:3000
 - **Performance**: Used `useMemo` to avoid unnecessary re-renders during sorting and filtering.
 - **Styling**: Types use a centralized `typeColors` utility for consistent color-coding across views.
 - **Pagination**: The example apps provided used a "Load more Pokemon" button instead of traditional pagination, so I chose to follow the same approach.
+- **Testing**: Includes basic tests for card display, sorting and filtering.
 
 ## 🧪 Improvements
 

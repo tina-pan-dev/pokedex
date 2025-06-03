@@ -1,3 +1,4 @@
+// __tests__/HomePage.test.tsx
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import HomePage from "../src/pages/components/HomePage";
 import { Pokemon } from "../src/pages/components/HomePage";
