@@ -1,14 +1,14 @@
 # Pokedex App
 
-This is a responsive, performant Pokedex web app built with **Next.js 13 Pages Router**, **TypeScript**, and **Tailwind CSS**. It showcases the original 151 Pokemon with server-rendered data, dynamic detail pages, search, sorting, and more.
+This is a responsive, performant Pokedex web app built with **Next.js**, **TypeScript**, and **Tailwind CSS**. It showcases the original 151 Pokemon with server-rendered data, dynamic detail pages, search, sorting, and more.
 
 ## 🧱 Tech Stack
 
-- [Next.js 13+ (App Router)](https://nextjs.org/docs/app)
+- [Next.js](https://nextjs.org/docs/app)
 - TypeScript
 - Tailwind CSS
 - PokéAPI (https://pokeapi.co)
-- Server-side rendering (SSR) + static generation
+- Server-side rendering (SSR)
 - React hooks + memoization
 
 ## ✨ Features
@@ -47,11 +47,17 @@ npm run dev
 http://localhost:3000
 ```
 
+## 🧩 Components
+
+- **`Header`** – Combines search input and sort dropdown in a single responsive control bar.
+- **`PokemonCard`** – Renders each Pokémon’s name, image, number, and type tags.
+- **`HomePage`** – Handles filtering, sorting, pagination, and renders the list of Pokémon using `Header` and `PokemonCard`.
+
 ## 🧠 Developer Notes
 
 - **Types**: Strong typing used throughout (`Pokemon`, `PokemonType`, etc).
 - **Fetching**: Data is fetched server-side using async server components for better performance and SEO.
-- **Fallbacks**: If detail fetch fails, it gracefully returns a fallback with empty types.
+- **Fallbacks**: If fetch fails or a Pokémon is not found, a fallback message is displayed
 - **Performance**: Used `useMemo` to avoid unnecessary re-renders during sorting and filtering.
 - **Styling**: Types use a centralized `typeColors` utility for consistent color-coding across views.
 - **Pagination**: The example apps provided used a "Load more Pokemon" button instead of traditional pagination, so I chose to follow the same approach.
