@@ -74,4 +74,4 @@ While some features were not implemented due to the nature of server-side data f
 - [ ] **Skeleton loading states** – Not strictly required here since data is fetched server-side, but could be useful for future client-side transitions.
 - [ ] **Global state (e.g., Zustand)** – Unnecessary in this case as sorting and search state are local and lightweight, but would be helpful in more complex or multi-page flows.
 - [ ] **Accessibility audit** – Further improvements could be made, especially around `aria-*` attributes.
-- [ ] **Testing** – Given more time, unit and integration tests could be added to cover search, filtering, and rendering logic.
+- [ ] **Testing** – Given more time, more testing could be done to cover the Pokemon detail page and Load More functionality.
