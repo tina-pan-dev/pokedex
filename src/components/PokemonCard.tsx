@@ -1,22 +1,32 @@
 // components/PokemonCard.tsx
 import Link from "next/link";
+import Image from "next/image";
 import { typeColors } from "../utils/typeColors";
 import { Pokemon } from "./HomePage";
 
 export function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
-  const paddedId = `#${pokemon.id.toString().padStart(4, "0")}`;
-  const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+  const paddedId = pokemon?.id
+    ? `#${pokemon.id.toString().padStart(4, "0")}`
+    : "";
+
+  const imageUrl = pokemon?.id
+    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`
+    : "";
 
   return (
     <li key={pokemon.id}>
       <Link href={`/pokemon/${pokemon.name}`} className="block">
         <div className="bg-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col items-center">
           <div className="w-28 h-28 mb-2 flex items-center justify-center">
-            <img
-              src={imageUrl}
-              alt={pokemon.name}
-              className="w-full h-full object-contain"
-            />
+            {imageUrl && (
+              <Image
+                src={imageUrl}
+                alt={pokemon.name}
+                width={256}
+                height={256}
+                className="object-contain mb-4"
+              />
+            )}
           </div>
           <p className="text-sm text-gray-500">{paddedId}</p>
           <h2 className="text-lg font-bold capitalize mb-2">{pokemon.name}</h2>
