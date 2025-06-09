@@ -1,6 +1,6 @@
 // __tests__/PokemonCard.test.tsx
-import { Pokemon } from "../src/pages/components/HomePage";
-import { PokemonCard } from "../src/pages/components/PokemonCard";
+import { Pokemon } from "../src/components/HomePage";
+import { PokemonCard } from "../src/components/PokemonCard";
 import { render, screen } from "@testing-library/react";
 
 const mockPokemon: Pokemon = {

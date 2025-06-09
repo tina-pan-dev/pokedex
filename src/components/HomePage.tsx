@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useDebounce } from "../utils/useDebounce";
-import { Header } from "../components/Header";
-import { PokemonCard } from "../components/PokemonCard";
+import { Header } from "./Header";
+import { PokemonCard } from "./PokemonCard";
 
 export type Pokemon = {
   name: string;

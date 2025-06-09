@@ -1,6 +1,4 @@
-// pages/index.tsx
-import HomePage, { Pokemon } from "./components/HomePage";
-import { GetServerSideProps } from "next";
+import HomePage, { Pokemon } from "../components/HomePage";
 
 type PokemonTypeData = {
   slot: number;
@@ -18,7 +16,7 @@ export default function IndexPage({ initialList }: Props) {
   return <HomePage initialList={initialList} />;
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export async function getStaticProps() {
   const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
 
   if (!res.ok) {
@@ -58,5 +56,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     props: {
       initialList: detailedList,
     },
+    revalidate: 86400, // optional ISR: revalidate every 24 hours
   };
-};
+}

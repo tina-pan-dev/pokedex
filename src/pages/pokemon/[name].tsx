@@ -1,105 +1,83 @@
-// src/pages/pokemon/[name].tsx
-import { GetServerSideProps } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { typeColors } from "../utils/typeColors";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useRouter } from "next/router";
 
-interface PokemonStat {
-  base_stat: number;
-  stat: {
-    name: string;
-  };
-}
-
-interface PokemonType {
-  slot: number;
-  type: {
-    name: string;
-  };
-}
-
-interface PokemonData {
-  id: number;
+type Pokemon = {
   name: string;
-  height: number;
+  id: number;
+  types: { slot: number; type: { name: string } }[];
+  stats: { base_stat: number; stat: { name: string } }[];
   weight: number;
-  types: PokemonType[];
-  stats: PokemonStat[];
-  sprites: {
-    other: {
-      ["official-artwork"]: {
-        front_default: string;
-      };
-    };
-  };
-}
-
-type Props = {
-  data: PokemonData | null;
+  height: number;
+  abilities: { ability: { name: string } }[];
 };
 
-export default function PokemonPage({ data }: Props) {
-  if (!data) {
-    return <p className="p-6 text-center text-red-600">Pokémon not found.</p>;
+type Props = {
+  pokemon: Pokemon | null;
+};
+
+export default function PokemonPage({ pokemon }: Props) {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <p className="text-center p-6">Loading...</p>;
   }
 
-  const paddedId = `#${data.id.toString().padStart(4, "0")}`;
-  const image = data.sprites.other["official-artwork"].front_default;
-  const types = data.types.sort((a, b) => a.slot - b.slot);
-  const stats = data.stats;
+  if (!pokemon) {
+    return <p className="text-center text-red-600 p-6">Pokémon not found.</p>;
+  }
+
+  const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
+  const paddedId = `#${pokemon.id.toString().padStart(4, "0")}`;
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <Link
-        href="/"
-        className="mb-4 inline-block text-blue-600 hover:underline text-sm"
-      >
-        ← Back to list
-      </Link>
-
-      <div className="flex flex-col items-center bg-white rounded-2xl p-6 shadow-md">
-        <Image
-          src={image}
-          alt={data.name}
-          width={256}
-          height={256}
-          className="object-contain mb-4"
+    <div className="p-6 max-w-3xl mx-auto">
+      <div className="flex flex-col items-center text-center">
+        <img
+          src={imageUrl}
+          alt={pokemon.name}
+          className="w-48 h-48 object-contain"
         />
+        <h1 className="text-4xl font-bold capitalize mt-4">{pokemon.name}</h1>
+        <p className="text-gray-500">{paddedId}</p>
 
-        <h1 className="text-3xl font-bold capitalize">{data.name}</h1>
-        <p className="text-gray-500 text-sm mb-4">{paddedId}</p>
-
-        <div className="flex gap-2 mb-6">
-          {types.map((t) => (
+        <div className="mt-4 flex gap-2">
+          {pokemon.types.map((t) => (
             <span
               key={t.type.name}
-              className={`text-xs px-3 py-1 rounded-full capitalize text-white ${
-                typeColors[t.type.name] || "bg-gray-400"
-              }`}
+              className="px-3 py-1 rounded-full bg-blue-500 text-white capitalize text-sm"
             >
               {t.type.name}
             </span>
           ))}
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 gap-4 w-full mb-6 text-center">
-          <div>
-            <p className="text-gray-500 text-sm">Height</p>
-            <p className="font-semibold">{data.height / 10} m</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Weight</p>
-            <p className="font-semibold">{data.weight / 10} kg</p>
-          </div>
+      <div className="mt-8 grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <h2 className="font-semibold text-gray-700">Height</h2>
+          <p>{pokemon.height / 10} m</p>
         </div>
-
-        <div className="w-full">
-          <h2 className="text-lg font-semibold mb-2">Base Stats</h2>
-          <ul className="space-y-2">
-            {stats.map((s) => (
-              <li key={s.stat.name} className="flex justify-between text-sm">
+        <div>
+          <h2 className="font-semibold text-gray-700">Weight</h2>
+          <p>{pokemon.weight / 10} kg</p>
+        </div>
+        <div className="col-span-2">
+          <h2 className="font-semibold text-gray-700">Abilities</h2>
+          <ul className="list-disc list-inside">
+            {pokemon.abilities.map((a) => (
+              <li key={a.ability.name} className="capitalize">
+                {a.ability.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="col-span-2">
+          <h2 className="font-semibold text-gray-700 mb-2">Base Stats</h2>
+          <ul className="space-y-1">
+            {pokemon.stats.map((s) => (
+              <li key={s.stat.name} className="flex justify-between">
                 <span className="capitalize">{s.stat.name}</span>
-                <span className="font-medium">{s.base_stat}</span>
+                <span>{s.base_stat}</span>
               </li>
             ))}
           </ul>
@@ -109,23 +87,45 @@ export default function PokemonPage({ data }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const name = context.params?.name;
+export const getStaticPaths: GetStaticPaths = async () => {
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+  const data = await res.json();
 
-  if (typeof name !== "string") {
-    return { props: { data: null } };
-  }
+  const paths = data.results.map((p: { name: string }) => ({
+    params: { name: p.name },
+  }));
 
+  return {
+    paths,
+    fallback: true, // Allow dynamic generation
+  };
+};
+
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    if (!res.ok) throw new Error("Fetch failed");
+    const res = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${params?.name}`
+    );
+    if (!res.ok) throw new Error("Failed to fetch");
+    const data = await res.json();
 
-    const data: PokemonData = await res.json();
+    const pokemon: Pokemon = {
+      name: data.name,
+      id: data.id,
+      types: data.types,
+      stats: data.stats,
+      weight: data.weight,
+      height: data.height,
+      abilities: data.abilities,
+    };
 
-    return { props: { data } };
+    return {
+      props: { pokemon },
+      revalidate: 60 * 60 * 24, // optional ISR
+    };
   } catch {
-    return { props: { data: null } };
+    return {
+      props: { pokemon: null },
+    };
   }
 };
